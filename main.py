@@ -67,7 +67,8 @@ def main():
     print("\n[6] MAKING PREDICTIONS")
     pred1 = trainer.predict_model1(X_test_scaled)
     pred2 = trainer.predict_model2(X_test_scaled)
-    print("✓ Predictions complete")
+    print(f"Model 1 - Min: ${pred1.min():.2f}, Max: ${pred1.max():.2f}, Mean: ${pred1.mean():.2f}")
+    print(f"Model 2 - Min: ${pred2.min():.2f}, Max: ${pred2.max():.2f}, Mean: ${pred2.mean():.2f}")
     
     # EVALUATE
     print("\n[7] MODEL EVALUATION")
