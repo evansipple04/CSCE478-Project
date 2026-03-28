@@ -65,7 +65,8 @@ def main():
     
     # PREDICT
     print("\n[6] MAKING PREDICTIONS")
-    pred1, pred2 = trainer.predict(X_test_scaled)
+    pred1 = trainer.predict_model1(X_test_scaled)
+    pred2 = trainer.predict_model2(X_test_scaled)
     print("✓ Predictions complete")
     
     # EVALUATE
