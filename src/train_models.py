@@ -1,6 +1,6 @@
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression # type: ignore
+from sklearn.ensemble import RandomForestRegressor # type: ignore
+from sklearn.metrics import mean_squared_error # type: ignore
 import numpy as np
 
 class ModelTrainer:

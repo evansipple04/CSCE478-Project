@@ -2,8 +2,8 @@ from src.load_data import load_csv
 from src.train_models import ModelTrainer
 from src.preprocess import preprocess_data
 from src.evaluate import evaluate_models
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.model_selection import train_test_split # type: ignore
+from sklearn.preprocessing import StandardScaler, LabelEncoder # type: ignore
 from pathlib import Path
 import pandas as pd
 import numpy as np
