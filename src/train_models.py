@@ -44,11 +44,3 @@ class ModelTrainer:
     def predict_model2(self, X_test):
         self.pred2 = self.model2.predict(X_test)
         return self.pred2
-    
-    def get_feature_importance(self):
-        if self.model2_trained:
-            importance = self.model2.feature_importances_
-            return importance
-        else:
-            print("Model 2 is not trained yet.")
-            return None
