@@ -2,8 +2,12 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score # 
 import pandas as pd
 import numpy as np
 
-def evaluate_models(y_test, pred1, pred2):
-    """Compare both models with proper metrics."""
+def evaluate_models(y_test, pred1, pred2, y_train=None, train_pred1=None, train_pred2=None):
+    """Compare both models with proper metrics.
+    
+    If training predictions are provided, also shows train vs test comparison
+    to detect overfitting.
+    """
     results = []
     
     # Linear Regression
@@ -35,9 +39,39 @@ def evaluate_models(y_test, pred1, pred2):
     })
     
     df_results = pd.DataFrame(results)
-    print("\n" + "="*60)
+    print("\nTEST SET RESULTS:")
+    print("="*60)
     print(df_results.to_string(index=False))
     print("="*60)
+    
+    # Overfitting detection
+    if y_train is not None and train_pred1 is not None and train_pred2 is not None:
+        train_results = []
+        
+        # Linear Regression on training data
+        train_r2_1 = r2_score(y_train, train_pred1)
+        train_results.append({
+            'Model': 'Linear Regression',
+            'Train R²': round(train_r2_1, 4),
+            'Test R²': round(r2_1, 4),
+            'Overfitting Gap': round(train_r2_1 - r2_1, 4)
+        })
+        
+        # Random Forest on training data
+        train_r2_2 = r2_score(y_train, train_pred2)
+        train_results.append({
+            'Model': 'Random Forest',
+            'Train R²': round(train_r2_2, 4),
+            'Test R²': round(r2_2, 4),
+            'Overfitting Gap': round(train_r2_2 - r2_2, 4)
+        })
+        
+        df_train = pd.DataFrame(train_results)
+        print("\nOVERFITTING DETECTION (Train vs Test):")
+        print("="*60)
+        print(df_train.to_string(index=False))
+        print("="*60)
+        print("\nNote: Large gaps indicate overfitting. Gap > 0.1 is concerning.")
     
     best_idx = df_results['R²'].idxmax()
     best = df_results.loc[best_idx]

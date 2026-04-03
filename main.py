@@ -2,11 +2,9 @@ from src.load_data import load_csv
 from src.train_models import ModelTrainer
 from src.preprocess import preprocess_data
 from src.evaluate import evaluate_models
-from sklearn.model_selection import train_test_split # type: ignore
-from sklearn.preprocessing import StandardScaler, LabelEncoder # type: ignore
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from pathlib import Path
-import pandas as pd
-import numpy as np
 
 def main():
     print("="*70)
@@ -21,25 +19,23 @@ def main():
     
     # PREPROCESS
     print("\n[2] PREPROCESSING")
-    df_weather, df_rides = preprocess_data(df_weather, df_rides)
-    print(f"After preprocessing: {df_weather.shape[0]} weather, {df_rides.shape[0]} rides")
+    df_rides = preprocess_data(df_weather, df_rides)
+    print(f"After preprocessing: {df_rides.shape[0]} rides with weather data merged")
     
-    # PREPARE DATA (using rides data only - or merge if needed)
+    # PREPARE DATA
     print("\n[3] PREPARING DATA")
     
     # Encode categorical columns
     df_rides_encoded = df_rides.copy()
-    categorical_cols = ['cab_type', 'destination', 'source']
+    categorical_cols = ['cab_type', 'destination', 'source', 'location']
     
-    le_dict = {}
     for col in categorical_cols:
         if col in df_rides_encoded.columns:
             le = LabelEncoder()
             df_rides_encoded[col] = le.fit_transform(df_rides_encoded[col].astype(str))
-            le_dict[col] = le
     
-    # Drop non-numeric and non-feature columns
-    X = df_rides_encoded.drop(['price', 'id', 'product_id', 'name'], axis=1, errors='ignore')
+    # Drop target variable to create features
+    X = df_rides_encoded.drop(['price'], axis=1, errors='ignore')
     y = df_rides_encoded['price']
     
     print(f"Features: {X.shape[1]} | Samples: {X.shape[0]}")
@@ -67,12 +63,14 @@ def main():
     print("\n[6] MAKING PREDICTIONS")
     pred1 = trainer.predict_model1(X_test_scaled)
     pred2 = trainer.predict_model2(X_test_scaled)
-    print(f"Model 1 - Min: ${pred1.min():.2f}, Max: ${pred1.max():.2f}, Mean: ${pred1.mean():.2f}")
-    print(f"Model 2 - Min: ${pred2.min():.2f}, Max: ${pred2.max():.2f}, Mean: ${pred2.mean():.2f}")
+    print(f"Predictions made for {X_test_scaled.shape[0]} test samples")
     
     # EVALUATE
     print("\n[7] MODEL EVALUATION")
-    evaluate_models(y_test, pred1, pred2)
+    # Get training predictions for overfitting detection
+    train_pred1 = trainer.predict_model1(X_train_scaled)
+    train_pred2 = trainer.predict_model2(X_train_scaled)
+    evaluate_models(y_test, pred1, pred2, y_train, train_pred1, train_pred2)
     
     print("\n" + "="*70)
     print("✓ PIPELINE COMPLETE")
